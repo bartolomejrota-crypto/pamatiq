@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pamatiq — Tvůj AI asistent v Messengeru</title>
+  <meta name="description" content="Pamatiq je český AI osobní asistent přímo v Messengeru a Instagramu.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#06060e;--card:#0e0e1a;--card2:#14142a;
+      --p:#7c3aed;--pl:#a78bfa;--pg:rgba(124,58,237,.25);
+      --b:#2563eb;--cy:#06b6d4;--pk:#ec4899;
+      --t:#eeeef5;--td:#8888a8;--tm:#555570;
+      --br:rgba(124,58,237,.12);--r:20px;
+      --gr:linear-gradient(135deg,#7c3aed 0%,#2563eb 40%,#06b6d4 100%);
+      --grp:linear-gradient(135deg,#7c3aed 0%,#ec4899 100%);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);overflow-x:hidden;line-height:1.6}
+    body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+    .orb{position:fixed;border-radius:50%;filter:blur(140px);pointer-events:none;z-index:0}
+    .o1{width:800px;height:800px;background:rgba(124,58,237,.1);top:-300px;left:-200px;animation:of 20s ease-in-out infinite}
+    .o2{width:600px;height:600px;background:rgba(37,99,235,.07);bottom:-100px;right:-200px;animation:of 25s ease-in-out infinite reverse}
+    .o3{width:400px;height:400px;background:rgba(236,72,153,.05);top:40%;left:50%;animation:of 18s ease-in-out infinite 5s}
+    @keyframes of{0%,100%{transform:translate(0,0)}33%{transform:translate(40px,-30px)}66%{transform:translate(-20px,40px)}}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(24px);background:rgba(6,6,14,.6);border-bottom:1px solid var(--br);transition:all .3s}
+    .logo{font-size:1.4rem;font-weight:900;letter-spacing:-1px}
+    .logo b{background:var(--gr);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .logo span{font-weight:300;color:var(--tm);font-size:1rem}
+    .nl{display:flex;gap:28px;list-style:none;align-items:center}
+    .nl a{color:var(--td);text-decoration:none;font-size:.88rem;transition:color .2s}
+    .nl a:hover{color:var(--pl)}
+    .nc{background:var(--gr);color:#fff!important;padding:10px 22px;border-radius:50px;font-weight:600;font-size:.85rem;transition:all .25s}
+    .nc:hover{box-shadow:0 6px 30px var(--pg);transform:translateY(-1px)}
+    @media(max-width:768px){.nl{display:none}nav{padding:14px 20px}}
+
+    section{position:relative;z-index:1;padding:120px 32px;max-width:1200px;margin:0 auto}
+    .lb{font-family:'JetBrains Mono',monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:4px;color:var(--pl);margin-bottom:14px}
+    .ti{font-size:2.6rem;font-weight:800;line-height:1.15;letter-spacing:-1.5px;margin-bottom:18px}
+    .su{font-size:1.1rem;color:var(--td);max-width:560px;font-weight:300;line-height:1.7}
+
+    /* ===== HERO ===== */
+    .hero{padding-top:140px;padding-bottom:80px;display:grid;grid-template-columns:1fr 400px;gap:60px;align-items:center;min-height:100vh}
+    .hero-left{display:flex;flex-direction:column}
+    .hero-pill{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:50px;border:1px solid var(--br);background:rgba(124,58,237,.06);font-size:.8rem;color:var(--pl);margin-bottom:24px;width:fit-content;animation:sd .7s cubic-bezier(.16,1,.3,1)}
+    .hero-pill .dot{width:7px;height:7px;background:#22c55e;border-radius:50%;animation:pu 2s infinite}
+    @keyframes pu{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+    @keyframes sd{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+    .hero h1{font-size:clamp(2.2rem,4.5vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-2.5px;margin-bottom:18px}
+    .hero h1 .gr{background:var(--gr);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero h1 .l2{display:block;font-size:clamp(1rem,2.2vw,1.6rem);font-weight:300;letter-spacing:-.3px;color:var(--td);margin-top:6px;-webkit-text-fill-color:var(--td);background:none}
+    .hero-sub{font-size:1.05rem;color:var(--td);margin-bottom:32px;font-weight:300;line-height:1.7;max-width:440px}
+    .hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+    .btn{display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:50px;font-size:.95rem;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all .3s;border:none}
+    .bm{background:var(--gr);color:#fff;box-shadow:0 4px 30px var(--pg)}
+    .bm:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(124,58,237,.35)}
+    .bi{background:var(--grp);color:#fff;box-shadow:0 4px 20px rgba(236,72,153,.2)}
+    .bi:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(236,72,153,.3)}
+    .btn svg{width:18px;height:18px;fill:currentColor}
+    .sp{display:flex;gap:28px;flex-wrap:wrap}
+    .sp-i{display:flex;flex-direction:column}
+    .sp-n{font-size:1.5rem;font-weight:800;background:var(--gr);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .sp-l{font-size:.7rem;color:var(--tm);letter-spacing:.5px}
+
+    /* hero stagger */
+    .hero-left>*{opacity:0;animation:ri .8s cubic-bezier(.16,1,.3,1) forwards}
+    .hero-left>*:nth-child(1){animation-delay:.1s}
+    .hero-left>*:nth-child(2){animation-delay:.2s}
+    .hero-left>*:nth-child(3){animation-delay:.35s}
+    .hero-left>*:nth-child(4){animation-delay:.5s}
+    .hero-left>*:nth-child(5){animation-delay:.65s}
+    @keyframes ri{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ===== DEMO PHONE (in hero) ===== */
+    .hero-right{opacity:0;animation:ri 1s cubic-bezier(.16,1,.3,1) .3s forwards}
+    .phone{background:var(--card);border-radius:28px;border:1px solid rgba(124,58,237,.2);overflow:hidden;display:flex;flex-direction:column;height:520px;box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 80px var(--pg);width:100%}
+    .ph{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.04)}
+    .ph-av{width:34px;height:34px;border-radius:50%;background:var(--gr);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}
+    .ph-name{font-weight:600;font-size:.9rem}
+    .ph-on{font-size:.65rem;color:#22c55e}
+    .msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
+    .msgs::-webkit-scrollbar{width:3px}
+    .msgs::-webkit-scrollbar-thumb{background:rgba(124,58,237,.3);border-radius:3px}
+    .dm{max-width:85%;padding:10px 14px;border-radius:16px;font-size:.82rem;line-height:1.5;opacity:0;animation:mp .4s cubic-bezier(.16,1,.3,1) forwards}
+    @keyframes mp{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .dm.u{align-self:flex-end;background:var(--p);color:#fff;border-bottom-right-radius:4px}
+    .dm.b{align-self:flex-start;background:rgba(255,255,255,.06);border-bottom-left-radius:4px}
+    .dm .mb{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+    .dm .m{padding:4px 10px;border-radius:12px;border:1px solid var(--br);background:rgba(124,58,237,.1);color:var(--pl);font-size:.7rem;font-weight:500}
+    .tp{align-self:flex-start;padding:12px 18px;border-radius:16px;background:rgba(255,255,255,.06);border-bottom-left-radius:4px;display:flex;gap:4px}
+    .tp span{width:6px;height:6px;background:var(--tm);border-radius:50%;animation:tb 1.2s ease-in-out infinite}
+    .tp span:nth-child(2){animation-delay:.15s}
+    .tp span:nth-child(3){animation-delay:.3s}
+    @keyframes tb{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+    .ch{padding:10px 14px;border-top:1px solid rgba(255,255,255,.04);display:flex;flex-direction:column;gap:5px}
+    .cc{width:100%;padding:10px 14px;background:rgba(124,58,237,.06);border:1px solid var(--br);border-radius:12px;color:var(--t);font-size:.78rem;font-family:inherit;cursor:pointer;text-align:left;transition:all .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cc:hover{background:rgba(124,58,237,.15);border-color:var(--p);transform:translateX(3px)}
+    .cc.off{opacity:.3;pointer-events:none}
+    .fin{padding:12px 14px;border-top:1px solid rgba(255,255,255,.04);display:none;flex-direction:column;gap:6px}
+    .fin p{font-size:.78rem;color:var(--td);text-align:center}
+    .fin-b{display:flex;gap:6px}
+    .fin-b a{flex:1;text-align:center;padding:10px;border-radius:12px;font-size:.8rem;font-weight:600;text-decoration:none;transition:all .2s;color:#fff}
+    .fin-b .fm{background:var(--gr)}
+    .fin-b .fi{background:var(--grp)}
+    .fin-b a:hover{transform:translateY(-1px)}
+    .re-btn{background:none;border:1px solid var(--br);color:var(--td);padding:8px;border-radius:10px;font-size:.75rem;font-family:inherit;cursor:pointer;transition:all .2s;margin-top:2px}
+    .re-btn:hover{border-color:var(--p);color:var(--t)}
+
+    /* ===== STEPS ===== */
+    .sg{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
+    .st{background:var(--card);border:1px solid var(--br);border-radius:var(--r);padding:36px 28px;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.16,1,.3,1)}
+    .st::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gr);opacity:0;transition:opacity .3s}
+    .st:hover{transform:translateY(-6px);border-color:rgba(124,58,237,.3);box-shadow:0 20px 50px rgba(0,0,0,.3)}
+    .st:hover::after{opacity:1}
+    .sn{font-family:'JetBrains Mono',monospace;font-size:2.8rem;font-weight:700;background:var(--gr);-webkit-background-clip:text;-webkit-text-fill-color:transparent;opacity:.3;margin-bottom:16px}
+    .se{font-size:2.2rem;margin-bottom:12px}
+    .st h3{font-size:1.15rem;font-weight:700;margin-bottom:8px}
+    .st p{color:var(--td);font-size:.9rem;font-weight:300;line-height:1.6}
+
+    /* ===== FEATURES ===== */
+    .features{text-align:center}
+    .fg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
+    .fe{background:linear-gradient(135deg,rgba(124,58,237,.05),rgba(37,99,235,.03));border:1px solid var(--br);border-radius:var(--r);padding:32px 24px;text-align:left;transition:all .4s cubic-bezier(.16,1,.3,1)}
+    .fe:hover{border-color:rgba(124,58,237,.25);transform:translateY(-4px);background:var(--card2)}
+    .fi2{font-size:1.8rem;margin-bottom:14px}
+    .fe h3{font-size:1.05rem;font-weight:700;margin-bottom:6px}
+    .fe p{color:var(--td);font-size:.85rem;font-weight:300;line-height:1.6}
+
+    /* ===== PRICING ===== */
+    .pricing{text-align:center}
+    .pg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px;align-items:start}
+    .pr{background:var(--card);border:1px solid var(--br);border-radius:var(--r);padding:36px 28px;text-align:center;transition:all .4s;position:relative}
+    .pr.pop{border-color:var(--p);box-shadow:0 0 60px rgba(124,58,237,.12);transform:scale(1.04)}
+    .pr.pop::before{content:'Nejoblíbenější';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gr);color:#fff;padding:5px 18px;border-radius:50px;font-size:.75rem;font-weight:600;white-space:nowrap}
+    .trial-badge{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#22c55e;padding:6px 14px;border-radius:8px;font-size:.8rem;font-weight:500;margin-bottom:12px;display:inline-block}
+    .guarantee{margin-top:32px;background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(34,197,94,.03));border:1px solid rgba(34,197,94,.2);border-radius:16px;padding:24px 28px;text-align:center;max-width:800px;margin-left:auto;margin-right:auto}
+    .guarantee h3{color:#22c55e;font-size:1.1rem;font-weight:700;margin-bottom:6px}
+    .guarantee p{color:var(--td);font-size:.9rem;font-weight:300}
+    .biz-card{margin-top:24px;background:var(--card);border:1px solid var(--br);border-radius:16px;padding:28px 32px;text-align:center;max-width:800px;margin-left:auto;margin-right:auto}
+    .biz-card h3{font-size:1.1rem;font-weight:700;margin-bottom:6px}
+    .biz-card p{color:var(--td);font-size:.9rem;font-weight:300;margin-bottom:4px}
+    .biz-card a{color:var(--pl);font-weight:600;font-size:1.1rem;text-decoration:none;transition:color .2s}
+    .biz-card a:hover{color:#fff}
+    .pn{font-size:1.2rem;font-weight:600;margin-bottom:4px}
+    .pc{font-size:3.2rem;font-weight:900;letter-spacing:-2px;margin:12px 0}
+    .pc span{font-size:.9rem;font-weight:300;color:var(--td);letter-spacing:0}
+    .pc.free{background:var(--gr);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .pr ul{list-style:none;text-align:left;margin:20px 0 28px;display:flex;flex-direction:column;gap:10px}
+    .pr li{display:flex;align-items:center;gap:9px;font-size:.88rem;color:var(--td);font-weight:300}
+    .pr li::before{content:'✓';color:var(--pl);font-weight:700}
+    .pb{display:block;width:100%;padding:13px;border-radius:50px;border:1px solid var(--br);background:transparent;color:var(--t);font-size:.9rem;font-weight:500;font-family:inherit;cursor:pointer;transition:all .3s;text-decoration:none;text-align:center}
+    .pb:hover{background:rgba(124,58,237,.1);border-color:var(--p)}
+    .pb.pm{background:var(--gr);border:none;color:#fff}
+    .pb.pm:hover{box-shadow:0 8px 30px var(--pg);transform:translateY(-1px)}
+
+    /* ===== TESTIMONIALS ===== */
+    .test{text-align:center}
+    .tg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
+    .tc{background:var(--card);border:1px solid var(--br);border-radius:var(--r);padding:28px;text-align:left;transition:all .3s}
+    .tc:hover{border-color:rgba(124,58,237,.25)}
+    .ts{color:#fbbf24;margin-bottom:12px;letter-spacing:2px}
+    .tt{color:var(--td);font-size:.9rem;font-weight:300;line-height:1.7;margin-bottom:16px;font-style:italic}
+    .tw{display:flex;align-items:center;gap:10px}
+    .ta{width:36px;height:36px;border-radius:50%;background:var(--gr);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem}
+    .tn{font-weight:600;font-size:.85rem}
+    .tr{color:var(--tm);font-size:.75rem}
+
+    /* ===== FAQ ===== */
+    .faq{max-width:760px}
+    .fl{margin-top:44px;display:flex;flex-direction:column;gap:10px}
+    .fq-i{border:1px solid var(--br);border-radius:12px;overflow:hidden;transition:border-color .3s}
+    .fq-i:hover{border-color:rgba(124,58,237,.25)}
+    .fq-q{width:100%;padding:18px 22px;background:var(--card);border:none;color:var(--t);font-size:.95rem;font-weight:500;font-family:inherit;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+    .fq-q:hover{background:var(--card2)}
+    .fq-a{max-height:0;overflow:hidden;transition:max-height .4s,padding .4s}
+    .fq-i.open .fq-a{max-height:200px;padding:0 22px 18px}
+    .fq-a p{color:var(--td);font-size:.88rem;font-weight:300;line-height:1.7}
+    .arr{transition:transform .3s;color:var(--pl)}
+    .fq-i.open .arr{transform:rotate(180deg)}
+
+    /* ===== CTA ===== */
+    .cta{text-align:center;padding:100px 32px}
+    .cb{background:var(--card);border:1px solid var(--br);border-radius:28px;padding:72px 48px;position:relative;overflow:hidden}
+    .cb::before{content:'';position:absolute;top:-60%;left:-30%;width:160%;height:160%;background:radial-gradient(circle,rgba(124,58,237,.07),transparent 60%)}
+    .cb h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:14px;position:relative;letter-spacing:-1px}
+    .cb p{color:var(--td);font-size:1.1rem;margin-bottom:32px;font-weight:300;position:relative}
+    .cb-b{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+
+    footer{position:relative;z-index:1;border-top:1px solid var(--br);padding:32px}
+    .foot{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+    .foot-l{display:flex;gap:20px;list-style:none}
+    .foot-l a{color:var(--tm);text-decoration:none;font-size:.8rem;transition:color .2s}
+    .foot-l a:hover{color:var(--pl)}
+    .foot-c{color:var(--tm);font-size:.8rem}
+
+    /* REVEAL */
+    .rv{opacity:0;transform:translateY(40px);transition:all .9s cubic-bezier(.16,1,.3,1)}
+    .rv.vis{opacity:1;transform:translateY(0)}
+    .rv.vis .st,.rv.vis .fe,.rv.vis .pr,.rv.vis .tc{opacity:0;animation:ri .6s cubic-bezier(.16,1,.3,1) forwards}
+    .rv.vis *:nth-child(1){animation-delay:.1s}.rv.vis *:nth-child(2){animation-delay:.2s}.rv.vis *:nth-child(3){animation-delay:.3s}
+    .rv.vis .fe:nth-child(4){animation-delay:.35s}.rv.vis .fe:nth-child(5){animation-delay:.4s}.rv.vis .fe:nth-child(6){animation-delay:.45s}
+    .rv.vis .fe:nth-child(7){animation-delay:.5s}.rv.vis .fe:nth-child(8){animation-delay:.55s}.rv.vis .fe:nth-child(9){animation-delay:.6s}
+
+    /* RESPONSIVE */
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr;text-align:center;padding-top:120px}
+      .hero-left{align-items:center}
+      .hero-right{max-width:380px;margin:0 auto}
+      .phone{height:480px}
+      .sg,.fg,.pg,.tg{grid-template-columns:1fr}
+      .pr.pop{transform:scale(1)}
+      section{padding:80px 20px}
+      .ti{font-size:2rem}
+      .cb{padding:40px 24px}
+      .foot{flex-direction:column;text-align:center}
+      .sp{justify-content:center}
+      .hero-btns{justify-content:center}
+    }
+  </style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+
+<nav>
+  <div class="logo"><b>pamatiq</b> <span>.cz</span></div>
+  <ul class="nl">
+    <li><a href="#jak">Jak to funguje</a></li>
+    <li><a href="#funkce">Funkce</a></li>
+    <li><a href="#cenik">Ceník</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="https://m.me/998971479969514" class="nc">Vyzkoušet</a></li>
+  </ul>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-pill"><span class="dot"></span> 250+ Čechů už nezapomíná</div>
+    <h1>Tvůj osobní<br><span class="gr">AI asistent</span><span class="l2">přímo v Messengeru a Instagramu</span></h1>
+    <p class="hero-sub">Připomínky, seznamy, denní přehledy. Stačí napsat zprávu — žádná appka, žádná registrace.</p>
+    <div class="hero-btns">
+      <a href="https://m.me/998971479969514" class="btn bm"><svg viewBox="0 0 24 24"><path d="M12 2C6.36 2 2 6.13 2 11.7c0 2.91 1.2 5.42 3.15 7.2V22l3.04-1.67c.85.24 1.75.37 2.81.37 5.64 0 10-4.13 10-9.7S17.64 2 12 2zm1.07 13.07l-2.54-2.72L5.8 15.07l5.13-5.44 2.54 2.72 4.73-2.72-5.13 5.44z"/></svg>Messenger</a>
+      <a href="https://ig.me/m/pamatiq" class="btn bi"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>Instagram</a>
+    </div>
+    <div class="sp">
+      <div class="sp-i"><div class="sp-n">250+</div><div class="sp-l">uživatelů</div></div>
+      <div class="sp-i"><div class="sp-n">5 000+</div><div class="sp-l">připomínek</div></div>
+      <div class="sp-i"><div class="sp-n">4.9★</div><div class="sp-l">hodnocení</div></div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE DEMO PHONE -->
+  <div class="hero-right">
+    <div class="phone">
+      <div class="ph">
+        <div class="ph-av">P</div>
+        <div><div class="ph-name">Pamatiq</div><div class="ph-on">online</div></div>
+      </div>
+      <div class="msgs" id="msgs">
+        <div class="dm b" style="animation-delay:0s">Ahoj! 👋 Jsem Pamatiq. Vyber co chceš vyzkoušet:</div>
+      </div>
+      <div class="ch" id="ch"></div>
+      <div class="fin" id="fin">
+        <p>✨ Takhle Pamatiq funguje naživo!</p>
+        <div class="fin-b">
+          <a href="https://m.me/998971479969514" class="fm">💬 Messenger</a>
+          <a href="https://ig.me/m/pamatiq" class="fi">📸 Instagram</a>
+        </div>
+        <button class="re-btn" onclick="resetDemo()">↻ Zkusit znovu</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== JAK TO FUNGUJE ===== -->
+<section id="jak" class="rv">
+  <div class="lb">Začni za 30 sekund</div>
+  <div class="ti">Jak to funguje?</div>
+  <div class="su">Žádná instalace. Tři kroky a máš AI asistenta.</div>
+  <div class="sg">
+    <div class="st"><div class="sn">01</div><div class="se">💬</div><h3>Napiš zprávu</h3><p>Otevři Messenger nebo Instagram a napiš Pamatiqu. Česky, svými slovy.</p></div>
+    <div class="st"><div class="sn">02</div><div class="se">🧠</div><h3>AI pochopí</h3><p>"Připomeň mi zítra vzít prášky" — Pamatiq rozumí kontextu a nastaví vše za tebe.</p></div>
+    <div class="st"><div class="sn">03</div><div class="se">⏰</div><h3>Připomene ti</h3><p>V přesný čas přijde zpráva. Odlož, potvrď, nebo přidej další.</p></div>
+  </div>
+</section>
+
+<!-- ===== FUNKCE ===== -->
+<section id="funkce" class="features rv">
+  <div class="lb">Kompletní asistent</div>
+  <div class="ti">Víc než jen připomínky</div>
+  <div class="su" style="margin:0 auto">Všechno co potřebuješ, na jednom místě.</div>
+  <div class="fg">
+    <div class="fe"><div class="fi2">⏰</div><h3>Chytré připomínky</h3><p>Schůzky, deadliny, narozeniny, platby — cokoliv. Jednorázově nebo opakovaně. S odložením jedním klikem.</p></div>
+    <div class="fe"><div class="fi2">📋</div><h3>Seznamy na cokoliv</h3><p>Nákupy, úkoly, balení na dovolenou, wishlist. Přidej víc věcí najednou, zaškrtávej, sdílej.</p></div>
+    <div class="fe"><div class="fi2">☀️</div><h3>Ranní briefing</h3><p>Každé ráno ti řekneme co tě čeká. Připomínky, seznamy, přehled dne — za 10 sekund víš na čem jsi.</p></div>
+    <div class="fe"><div class="fi2">🎤</div><h3>Hlasové zprávy</h3><p>Řídíš? Vaříš? Prostě namluvíš co potřebuješ a Pamatiq to zpracuje za tebe.</p></div>
+    <div class="fe"><div class="fi2">🔄</div><h3>Opakující se rutiny</h3><p>"Každé pondělí v 9 porada." "Každý den v 8 prášky." "1. v měsíci zaplatit nájem." Nastav jednou, funguje navždy.</p></div>
+    <div class="fe"><div class="fi2">🌙</div><h3>Večerní shrnutí</h3><p>Před spaním ti shrneme den. Co jsi stihl, co tě čeká zítra. Klidná hlava, nic ti neunikne.</p></div>
+    <div class="fe"><div class="fi2">💬</div><h3>Přirozená čeština</h3><p>Žádné formuláře. Piš jak mluvíš — "zítra ve tři u zubaře" nebo "za hodinu vyzvednout děti". AI pochopí.</p></div>
+    <div class="fe"><div class="fi2">📱</div><h3>Nulová instalace</h3><p>Messenger nebo Instagram máš v telefonu. Žádná nová appka, žádná registrace. Napíšeš zprávu a jedeš.</p></div>
+    <div class="fe"><div class="fi2">🔒</div><h3>Tvoje data, tvoje věc</h3><p>Šifrované servery v EU. Žádné reklamy, žádné sdílení. Co řekneš Pamatiqu, zůstane mezi vámi.</p></div>
+  </div>
+</section>
+
+<!-- ===== FAMILY HIGHLIGHT ===== -->
+<section class="rv" style="text-align:center">
+  <div style="background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(236,72,153,.06));border:1px solid rgba(124,58,237,.2);border-radius:28px;padding:60px 40px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-40%;right:-20%;width:500px;height:500px;background:radial-gradient(circle,rgba(236,72,153,.08),transparent 60%);pointer-events:none"></div>
+    <div style="font-size:3.5rem;margin-bottom:16px">👨‍👩‍👧‍👦</div>
+    <div class="lb" style="text-align:center">To nemá žádná jiná appka</div>
+    <h2 style="font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;letter-spacing:-1.5px;margin-bottom:16px;position:relative">Připomeň cokoliv<br><span class="gr">komukoliv z rodiny</span></h2>
+    <p style="color:var(--td);font-size:1.05rem;font-weight:300;max-width:520px;margin:0 auto 32px;line-height:1.7;position:relative">"Připomeň mamce v 8 vzít léky." "Řekni tátovi že zítra jedeme na oběd." "Připomeň synovi že má zítra test." Napíšeš jednu zprávu — Pamatiq to doručí.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:700px;margin:0 auto 32px">
+      <div style="background:rgba(255,255,255,.04);border-radius:14px;padding:20px 16px">
+        <div style="font-size:1.5rem;margin-bottom:8px">💊</div>
+        <div style="font-weight:600;font-size:.9rem;margin-bottom:4px">Rodiče & prarodiče</div>
+        <div style="color:var(--td);font-size:.8rem;font-weight:300">Léky, doktor, rehabilitace. Oni nemusí nic instalovat.</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-radius:14px;padding:20px 16px">
+        <div style="font-size:1.5rem;margin-bottom:8px">🎒</div>
+        <div style="font-weight:600;font-size:.9rem;margin-bottom:4px">Děti & studenti</div>
+        <div style="color:var(--td);font-size:.8rem;font-weight:300">Úkoly, zkoušky, kroužky. Připomínka přijde přímo jim.</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-radius:14px;padding:20px 16px">
+        <div style="font-size:1.5rem;margin-bottom:8px">💑</div>
+        <div style="font-weight:600;font-size:.9rem;margin-bottom:4px">Partner & kamarádi</div>
+        <div style="color:var(--td);font-size:.8rem;font-weight:300">Sdílené seznamy, společné plány. Všichni na jedné vlně.</div>
+      </div>
+    </div>
+    <a href="https://m.me/998971479969514" class="btn bm" style="position:relative">Vyzkoušet Family Plan</a>
+  </div>
+</section>
+
+<!-- ===== CENÍK ===== -->
+<section id="cenik" class="pricing rv">
+  <div class="lb">Jednoduchý ceník</div>
+  <div class="ti">Vyber si svůj plán</div>
+  <div class="su" style="margin:0 auto">Začni zdarma. Upgraduj když budeš chtít víc.</div>
+  <div class="pg">
+    <div class="pr"><div class="pn">Zdarma</div><div class="pc free">0 Kč</div><ul><li>5 připomínek měsíčně</li><li>1 seznam</li><li>Ranní briefing</li><li>AI asistent</li></ul><a href="https://m.me/998971479969514" class="pb">Začít zdarma</a></div>
+    <div class="pr pop"><div class="pn">Premium</div><div class="trial-badge">🎁 7 dní zdarma</div><div class="pc">99 Kč <span>/měsíc</span></div><ul><li>Neomezené připomínky</li><li>Neomezené seznamy</li><li>Opakující se připomínky</li><li>Hlasové zprávy</li><li>Večerní shrnutí</li><li>Google Kalendář</li></ul><a href="https://m.me/998971479969514" class="pb pm">Vyzkoušet 7 dní zdarma</a></div>
+    <div class="pr"><div class="pn">Family</div><div class="pc">199 Kč <span>/měsíc</span></div><ul><li>Vše z Premium</li><li>Až 5 členů rodiny</li><li>Sdílené seznamy</li><li>Připomínky pro blízké</li></ul><a href="https://m.me/998971479969514" class="pb">Získat Family</a></div>
+  </div>
+  <div class="guarantee"><h3>🛡️ Garance vrácení peněz</h3><p>Zapomene Pamatiq na připomínku? (Což se nestane 😄) Vrátíme vám peníze. Bez otázek, bez podmínek.</p></div>
+  <div class="biz-card"><h3>🏢 Pro firmy a 5+ uživatelů</h3><p>Hromadné připomínky, sdílené seznamy, firemní dashboard.</p><p>Kontaktujte náš obchodní tým:</p><a href="tel:+420725932729">📞 725 932 729</a></div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="test rv">
+  <div class="lb">Co říkají uživatelé</div>
+  <div class="ti">Pamatiq mění životy</div>
+  <div class="tg">
+    <div class="tc"><div class="ts">★★★★★</div><div class="tt">"Mamka konečně nezapomíná brát léky. Nastavila jsem jí to za minutu — od té doby ani jednou nevynechala."</div><div class="tw"><div class="ta">K</div><div><div class="tn">Kateřina M.</div><div class="tr">dcera, 34 let</div></div></div></div>
+    <div class="tc"><div class="ts">★★★★★</div><div class="tt">"Jako freelancer jsem zapomínal na follow-upy. Teď mi Pamatiq ráno řekne co mě čeká. Nezaplatitelné."</div><div class="tw"><div class="ta">T</div><div><div class="tn">Tomáš R.</div><div class="tr">grafický designér</div></div></div></div>
+    <div class="tc"><div class="ts">★★★★★</div><div class="tt">"Žádná appka, prostě napíšu zprávu. Nákupní seznamy sdílíme s manželkou — konečně funguje."</div><div class="tw"><div class="ta">P</div><div><div class="tn">Petr V.</div><div class="tr">otec dvou dětí</div></div></div></div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section id="faq" class="faq rv">
+  <div class="lb">Otázky a odpovědi</div>
+  <div class="ti">Časté dotazy</div>
+  <div class="fl">
+    <div class="fq-i"><button class="fq-q">Jak začnu Pamatiq používat?<span class="arr">▾</span></button><div class="fq-a"><p>Otevři Messenger nebo Instagram, najdi Pamatiq a napiš zprávu. Za 30 sekund máš AI asistenta.</p></div></div>
+    <div class="fq-i"><button class="fq-q">Je to bezpečné?<span class="arr">▾</span></button><div class="fq-a"><p>Data jsou šifrovaná na serverech v EU. Nikdy je nesdílíme s třetími stranami.</p></div></div>
+    <div class="fq-i"><button class="fq-q">Funguje Messenger i Instagram?<span class="arr">▾</span></button><div class="fq-a"><p>Ano! Obě platformy, stejné funkce, jeden účet.</p></div></div>
+    <div class="fq-i"><button class="fq-q">Rozumí hlasovým zprávám?<span class="arr">▾</span></button><div class="fq-a"><p>Pošli hlasovku a Pamatiq ji automaticky přepíše a zpracuje česky.</p></div></div>
+    <div class="fq-i"><button class="fq-q">Jak funguje Family plán?<span class="arr">▾</span></button><div class="fq-a"><p>Jeden platí, až 5 členů. Sdílené seznamy a připomínky — "připomeň mamce léky".</p></div></div>
+    <div class="fq-i"><button class="fq-q">Můžu to zrušit kdykoliv?<span class="arr">▾</span></button><div class="fq-a"><p>Kdykoli. Žádné smlouvy, žádné závazky.</p></div></div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta rv">
+  <div class="cb">
+    <h2>Přestaň zapomínat.<br><span class="gr">Začni dnes.</span></h2>
+    <p>30 sekund. Žádná instalace. Prostě napiš zprávu.</p>
+    <div class="cb-b">
+      <a href="https://m.me/998971479969514" class="btn bm">💬 Messenger</a>
+      <a href="https://ig.me/m/pamatiq" class="btn bi">📸 Instagram</a>
+    </div>
+  </div>
+</section>
+
+<footer><div class="foot">
+  <div class="logo"><b>pamatiq</b> <span>.cz</span></div>
+  <ul class="foot-l"><li><a href="#">Podmínky</a></li><li><a href="#">Soukromí</a></li><li><a href="/cdn-cgi/l/email-protection#335a5d555c7343525e52475a421d5049">Kontakt</a></li></ul>
+  <div class="foot-c">&copy; 2026 Pamatiq</div>
+</div></footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const S=[
+  {user:"Zítra mám doktora v 18:30, připomeneš mi?",bot:"⏰ Připomínka nastavena:\n\n📅 Zítra v 18:00 (30 min předem)\n📝 Návštěva doktora",btns:["👍 OK","❌ Zrušit"]},
+  {user:"Přidej na nákupy mléko, chleba a banány",bot:"✅ Přidáno na nákupy:\n\n1. ⬜ mléko\n2. ⬜ chleba\n3. ⬜ banány",btns:["📋 Seznam","➕ Přidat"]},
+  {user:"Každý den v 8 mi připomeň vzít prášky",bot:"🔄 Opakující se připomínka:\n\n📅 Každý den v 8:00\n💊 Vzít prášky\n\nPrvní připomínka zítra ráno!",btns:["👍 Super","❌ Zrušit"]},
+  {user:"Co mám dnes na plánu?",bot:"☀️ Tvůj den:\n\n⏰ 9:00 — Zavolat doktorovi\n⏰ 14:00 — Schůzka s Petrem\n⏰ 18:30 — Doktor\n\n📋 Nákupy: 3 položky",btns:["👍 Díky!"]},
+  {user:"Koupil jsem mléko a chleba",bot:"✅ Zaškrtnuto!\n\n📋 Nákupy:\n1. ✅ mléko\n2. ✅ chleba\n3. ⬜ banány\n\nZbývá 1 položka.",btns:["📋 Seznam"]},
+  {user:"Připomeň mamce v 8 vzít Warfarin",bot:"👨‍👩‍👧 Rodinná připomínka:\n\n📅 Zítra v 8:00\n💊 Vzít Warfarin\n👤 Pro: Mamka\n\nMamce přijde zpráva!",btns:["👍 Odeslat","❌ Zrušit"]}
+];
+let step=0,used=[];
+
+function initDemo(){
+  step=0;used=[];
+  document.getElementById('msgs').innerHTML='<div class="dm b">Ahoj! 👋 Jsem Pamatiq. Vyber co chceš vyzkoušet:</div>';
+  document.getElementById('fin').style.display='none';
+  document.getElementById('ch').style.display='flex';
+  showCh();
+}
+
+function resetDemo(){initDemo()}
+
+function showCh(){
+  const c=document.getElementById('ch');c.innerHTML='';
+  const av=S.filter((_,i)=>!used.includes(i));
+  if(!av.length||step>=3){c.style.display='none';document.getElementById('fin').style.display='flex';return}
+  const sh=av.map((s,i)=>({s,idx:S.indexOf(s)})).sort(()=>Math.random()-.5).slice(0,Math.min(3,av.length));
+  sh.forEach(({s,idx})=>{
+    const b=document.createElement('button');b.className='cc';b.textContent=s.user;b.onclick=()=>pick(idx);c.appendChild(b);
+  });
+}
+
+async function pick(idx){
+  used.push(idx);step++;
+  const s=S[idx],m=document.getElementById('msgs'),c=document.getElementById('ch');
+  c.querySelectorAll('.cc').forEach(x=>x.classList.add('off'));
+  const u=document.createElement('div');u.className='dm u';u.textContent=s.user;m.appendChild(u);m.scrollTop=m.scrollHeight;
+  await d(600);
+  const t=document.createElement('div');t.className='tp';t.innerHTML='<span></span><span></span><span></span>';m.appendChild(t);m.scrollTop=m.scrollHeight;
+  await d(1200);t.remove();
+  const b=document.createElement('div');b.className='dm b';
+  let h=s.bot.replace(/\n/g,'<br>');
+  if(s.btns){h+='<div class="mb">';s.btns.forEach(x=>{h+='<span class="m">'+x+'</span>'});h+='</div>'}
+  b.innerHTML=h;m.appendChild(b);m.scrollTop=m.scrollHeight;
+  await d(700);showCh();
+}
+
+function d(ms){return new Promise(r=>setTimeout(r,ms))}
+
+// Auto-start demo
+setTimeout(()=>{initDemo()},500);
+
+// Auto-play first scenario on mobile
+if(window.innerWidth<=768){setTimeout(()=>{if(step===0)pick(0)},2000)}
+
+// FAQ
+document.querySelectorAll('.fq-q').forEach(b=>{b.addEventListener('click',()=>{const i=b.parentElement,o=i.classList.contains('open');document.querySelectorAll('.fq-i').forEach(x=>x.classList.remove('open'));if(!o)i.classList.add('open')})});
+
+// Reveal
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis')})},{threshold:.08});
+document.querySelectorAll('.rv').forEach(x=>obs.observe(x));
+
+// Nav
+window.addEventListener
